@@ -67,24 +67,24 @@ const config = {
   },
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          compress: {
-            warnings: false,
-            conditionals: true,
-            unused: true,
-            comparisons: true,
-            sequences: true,
-            dead_code: true,
-            evaluate: true,
-            join_vars: true,
-            if_return: true
-          },
-          output: {
-            comments: false
-          }
-        }
-      }),
+      // new UglifyJsPlugin({
+      //   uglifyOptions: {
+      //     warnings: false,
+      //     compress: {
+      //       conditionals: true,
+      //       unused: true,
+      //       comparisons: true,
+      //       sequences: true,
+      //       dead_code: true,
+      //       evaluate: true,
+      //       join_vars: true,
+      //       if_return: true
+      //     },
+      //     output: {
+      //       comments: false
+      //     }
+      //   }
+      // }),
       new OptimizeCSSAssetsPlugin({})
     ]
   },

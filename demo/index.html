@@ -41,7 +41,9 @@
       var quill = new Quill('#quill-editor', {
         modules: {
           "toolbar": toolbarOptions,
-          "emoji-toolbar": true,
+          "emoji-toolbar": {
+            top: "-250px"
+          },
           "emoji-shortname": true,
           "emoji-textarea": true
         },

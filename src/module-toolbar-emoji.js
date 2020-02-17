@@ -8,7 +8,7 @@ const Module = Quill.import('core/module');
 class ToolbarEmoji extends Module {
   constructor(quill, options) {
     super(quill, options);
-
+    console.log(this);
     this.quill = quill;
     this.toolbar = quill.getModule('toolbar');
     if (typeof this.toolbar !== 'undefined')
@@ -24,7 +24,8 @@ class ToolbarEmoji extends Module {
 
   checkPalatteExist() {
     let quill = this.quill;
-    fn_checkDialogOpen(quill);
+    let options = quill.options.modules['emoji-toolbar'];
+    fn_checkDialogOpen(quill, options);
     this.quill.on('text-change', function(delta, oldDelta, source) {
       if (source === 'user') {
         fn_close();
@@ -39,18 +40,25 @@ ToolbarEmoji.DEFAULTS = {
 };
 
 function fn_close(){
+  document.removeEventListener('click', outsideClickListener);
   let ele_emoji_plate = document.getElementById('emoji-palette');
-  document.getElementById('emoji-close-div').style.display = "none";
   if (ele_emoji_plate) {ele_emoji_plate.remove()}
 }
 
-function fn_checkDialogOpen(quill){
+const outsideClickListener = (event) => {
+  const target = event.target;
+  if (target.closest('#emoji-palette') === null)  {
+    fn_close();
+  }
+}
+
+function fn_checkDialogOpen(quill, options){
   let elementExists = document.getElementById("emoji-palette");
   if (elementExists) {
     elementExists.remove();
   }
   else{
-    fn_showEmojiPalatte(quill);
+    fn_showEmojiPalatte(quill, options);
   }
 }
 
@@ -59,7 +67,7 @@ function fn_updateRange(quill){
   return range;
 }
 
-function fn_showEmojiPalatte(quill) {
+function fn_showEmojiPalatte(quill, options) {
   let ele_emoji_area = document.createElement('div');
   let toolbar_container = document.querySelector('.ql-toolbar');
   let range = quill.getSelection();
@@ -68,7 +76,11 @@ function fn_showEmojiPalatte(quill) {
   quill.container.appendChild(ele_emoji_area);
   let paletteMaxPos = atSignBounds.left + 250;//palette max width is 250
   ele_emoji_area.id = 'emoji-palette';
-  ele_emoji_area.style.top = 10 + atSignBounds.top + atSignBounds.height + "px";
+  if (options.top) {
+    ele_emoji_area.style.top = options.top;
+  } else {
+    ele_emoji_area.style.top = 10 + atSignBounds.top + atSignBounds.height + "px";
+  }
   if (paletteMaxPos > quill.container.offsetWidth) {
     ele_emoji_area.style.left = (atSignBounds.left - 250)+ "px";
   }
@@ -100,16 +112,11 @@ function fn_showEmojiPalatte(quill) {
   let tabElementHolder = document.createElement('ul');
   tabToolbar.appendChild(tabElementHolder);
 
-  if (document.getElementById('emoji-close-div') === null) {
-    let closeDiv = document.createElement('div');
-    closeDiv.id = 'emoji-close-div';
-    closeDiv.addEventListener("click", fn_close, false);
-    document.getElementsByTagName('body')[0].appendChild(closeDiv);
-  }
-  else{
-    document.getElementById('emoji-close-div').style.display = "block";
-  }
-
+  setTimeout(
+      () => {
+        document.addEventListener('click', outsideClickListener)
+      }
+  )
 
   emojiType.map(function(emojiType) {
     //add tab bar
